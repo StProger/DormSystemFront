@@ -1,0 +1,167 @@
+export const API_BASE = 'http://localhost:8001/api';
+
+export type LoginResp = { access_token: string; token_type: string };
+
+export async function apiFetch<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const headers = new Headers(init.headers || {});
+  headers.set('Accept', 'application/json');
+  if (!(init.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
+  const token = localStorage.getItem('access_token');
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+
+  const r = await fetch(`${API_BASE}${path}`, { ...init, headers });
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(text || `HTTP ${r.status}`);
+  }
+  if (r.status === 204) return undefined as unknown as T;
+  return r.json() as Promise<T>;
+}
+
+export async function login(email: string, password: string): Promise<LoginResp> {
+  return apiFetch<LoginResp>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export type UserRole = 'student' | 'comendant' | 'head' | 'guard';
+export type Me = {
+  id: string;
+  email: string;
+  role: UserRole;
+  full_name?: string | null;
+  phone?: string | null;
+};
+
+export function getMe() {
+  return apiFetch<Me>('/users/me');
+}
+
+
+export type Announcement = {
+  id: string;
+  title: string;
+  body: string;
+  image_url?: string | null;
+  publish_at: string; // ISO
+};
+
+
+export async function getAnnouncements(): Promise<Announcement[]> {
+  return apiFetch<Announcement[]>('/announcements');
+}
+
+export async function createAnnouncementApi(params: { title: string; body: string; image?: File | null }) {
+  const form = new FormData();
+  form.append('title', params.title);
+  form.append('body', params.body);
+  if (params.image) form.append('image', params.image);
+  const token = localStorage.getItem('access_token');
+
+  const r = await fetch(`${API_BASE}/announcements`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: form,
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(t || `HTTP ${r.status}`);
+  }
+  return r.json() as Promise<Announcement>;
+}
+
+
+export type TicketType = 'repair' | 'maintenance' | 'receipt' | 'large_item'; 
+export type TicketStatus = 'in_processing' | 'in_work' | 'done';
+
+export type TicketAttachment = {
+  file_name: string;
+  url: string;
+};
+
+export type Ticket = {
+  id: string;
+  title: string;
+  description: string;
+  type: TicketType;
+  status: TicketStatus;
+  created_at: string; // ISO
+  attachments: TicketAttachment[];
+};
+
+export async function getMyTickets(): Promise<Ticket[]> {
+  return apiFetch<Ticket[]>('/tickets/me');
+}
+
+export async function createTicketApi(params: {
+  title: string;
+  description: string;
+  type: TicketType;
+  files?: File[];
+}) {
+  const form = new FormData();
+  form.append('title', params.title);
+  form.append('description', params.description);
+  form.append('type', params.type);
+  (params.files ?? []).forEach(f => form.append('files', f));
+
+  const token = localStorage.getItem('access_token');
+  const r = await fetch(`${API_BASE}/tickets`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: form,
+  });
+  if (!r.ok) {
+    throw new Error(await r.text());
+  }
+  return r.json() as Promise<Ticket>;
+}
+
+export type TicketAdmin = {
+  id: string;
+  title: string;
+  description: string;
+  type: 'repair'|'maintenance'|'receipt'|'large_item';
+  status: 'in_processing'|'in_work'|'done';
+  created_at: string;
+  updated_at: string;
+  closed_at?: string | null;
+  created_by_id: string;
+  created_by_email?: string | null;
+  created_by_name?: string | null;
+  assigned_to_id?: string | null;
+  assigned_to_email?: string | null;
+  assigned_to_name?: string | null;
+  admin_comment?: string | null;
+  attachments: { file_name: string; url: string }[];
+};
+
+export async function adminGetTickets(params?: {
+  status?: 'in_processing'|'in_work'|'done';
+  type?: 'repair'|'maintenance'|'receipt'|'large_item';
+  only_unassigned?: boolean;
+}): Promise<TicketAdmin[]> {
+  const q = new URLSearchParams();
+  if (params?.status) q.set('status', params.status);
+  if (params?.type) q.set('type', params.type);
+  if (params?.only_unassigned) q.set('only_unassigned', 'true');
+  const p = q.toString();
+  return apiFetch<TicketAdmin[]>('/tickets' + (p ? `?${p}` : ''));
+}
+
+export async function adminUpdateTicket(id: string, body: {
+  status?: 'in_processing'|'in_work'|'done';
+  assign_self?: boolean;
+  admin_comment?: string | null;
+}): Promise<TicketAdmin> {
+  return apiFetch<TicketAdmin>(`/tickets/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+}
