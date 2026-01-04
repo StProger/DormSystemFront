@@ -1,4 +1,4 @@
-export const API_BASE = 'http://localhost:8001/api';
+export const API_BASE = 'http://localhost:8000/api';
 
 export type LoginResp = { access_token: string; token_type: string };
 
@@ -163,5 +163,32 @@ export async function adminUpdateTicket(id: string, body: {
   return apiFetch<TicketAdmin>(`/tickets/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
+  });
+}
+
+export type MyRoom = {
+  room_id: string;
+  room_number: string;
+  last_assessment?: {
+    score: number;
+    comment?: string | null;
+    assessed_at: string;         // ISO
+    assessed_by_name?: string | null;
+  } | null;
+};
+
+export async function getMyRoom(): Promise<MyRoom> {
+  return apiFetch<MyRoom>('/rooms/me');
+}
+
+// для админов
+export async function resolveRoomByNumber(number: string): Promise<{id: string; number: string}> {
+  return apiFetch<{id:string; number:string}>(`/rooms/by-number/${encodeURIComponent(number)}`);
+}
+
+export async function createRoomAssessment(roomId: string, score: number, comment?: string) {
+  return apiFetch(`/rooms/${roomId}/assess`, {
+    method: 'POST',
+    body: JSON.stringify({ score, comment: comment || null }),
   });
 }

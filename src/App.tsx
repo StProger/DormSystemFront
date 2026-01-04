@@ -9,6 +9,8 @@ import Receipts from './pages/Receipts';
 import AnnouncementCreate from './pages/AnnouncementCreate';
 import TicketCreate from './pages/TicketCreate';
 import LargeItemCreate from './pages/LargeItemCreate';
+import RoomInfo from './pages/RoomInfo';
+import AssessRooms from './pages/AssessRooms';
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="tickets" element={<Tickets />} />
           <Route path="tickets/new" element={<TicketCreate />} />
           <Route path="large-items" element={<LargeItemCreate />} />
+          <Route path="room" element={<RoomInfo />} />
+          <Route path="assess" element={<AssessRooms />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/app" replace />} />

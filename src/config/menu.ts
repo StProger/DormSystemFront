@@ -10,10 +10,11 @@ const common: MenuItem[] = [
 
 const byRole: Record<UserRole, MenuItem[]> = {
   student: [
-    ...common,
-    { key: 'tickets', label: 'Мои заявки', path: '/app/tickets' },
-    { key: 'tickets-new', label: 'Создать заявку', path: '/app/tickets/new' },
-    { key: 'large', label: 'Внос/вынос КГВ', path: '/app/large-items' },
+  ...common,
+  { key: 'room', label: 'Моя комната', path: '/app/room' },
+  { key: 'tickets', label: 'Мои заявки', path: '/app/tickets' },
+  { key: 'tickets-new', label: 'Создать заявку', path: '/app/tickets/new' },
+  { key: 'large', label: 'Внос/вынос КГВ', path: '/app/large-items' },
   ],
   comendant: [
     ...common,
