@@ -1,38 +1,32 @@
+import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { getMe, Me } from '../api/client';
-import { clearToken } from '../api/auth';
-import Sidebar from './Sidebar';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import { getMe, type Me } from '../api/client';
 
 export default function AppLayout() {
   const [me, setMe] = useState<Me | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-    getMe()
-      .then(u => mounted && setMe(u))
-      .catch(() => {
-        setError('Сессия истекла. Войдите заново.');
-        clearToken();
-        navigate('/login', { replace: true });
-      });
-    return () => { mounted = false; };
-  }, [navigate]);
+    let alive = true;
+    getMe().then((d) => { if (alive) setMe(d); })
+           .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, []);
 
-  if (!me && !error) {
-    return <div className="splash">Загружаем профиль…</div>;
-  }
+  if (loading) return <div style={{padding:16}}>Загрузка…</div>;
+  if (!me) return null;
 
   return (
-    <div className="layout">
-      {me && <Sidebar me={me} />}
-      <main className="content">
-        <div className="content__inner">
+    <div style={{display:'grid', gridTemplateColumns:'240px 1fr', minHeight:'100vh'}}>
+      <Sidebar me={me} />
+      <div style={{display:'flex', flexDirection:'column', minWidth:0}}>
+        <Header me={me} />
+        <main style={{padding:16}}>
           <Outlet context={{ me }} />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import TicketCreate from './pages/TicketCreate';
 import LargeItemCreate from './pages/LargeItemCreate';
 import RoomInfo from './pages/RoomInfo';
 import AssessRooms from './pages/AssessRooms';
+import Logout from './pages/Logout';
 
 export default function App() {
   return (
@@ -36,8 +37,9 @@ export default function App() {
           <Route path="large-items" element={<LargeItemCreate />} />
           <Route path="room" element={<RoomInfo />} />
           <Route path="assess" element={<AssessRooms />} />
+          
         </Route>
-
+        <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>

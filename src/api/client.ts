@@ -2,25 +2,46 @@ export const API_BASE = 'http://localhost:8000/api';
 
 export type LoginResp = { access_token: string; token_type: string };
 
-export async function apiFetch<T>(
-  path: string,
-  init: RequestInit = {},
-): Promise<T> {
-  const headers = new Headers(init.headers || {});
-  headers.set('Accept', 'application/json');
-  if (!(init.body instanceof FormData)) {
+export async function serverLogout(): Promise<void> {
+  try {
+    await apiFetch('/auth/logout', { method: 'POST' });
+  } catch {
+  }
+}
+
+export function logoutClient() {
+  try { localStorage.removeItem('access_token'); } catch {}
+}
+
+export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = localStorage.getItem('access_token');
+
+  // аккуратно собираем заголовки, не ломаем FormData
+  const headers = new Headers(init.headers ?? {});
+  const isForm = typeof FormData !== 'undefined' && init.body instanceof FormData;
+  if (!isForm && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  const token = localStorage.getItem('access_token');
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  const r = await fetch(`${API_BASE}${path}`, { ...init, headers });
-  if (!r.ok) {
-    const text = await r.text();
-    throw new Error(text || `HTTP ${r.status}`);
+  const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
+
+  if (res.status === 401) {
+    // токен протух/невалиден — чистим и уводим на логин
+    logoutClient();
+    if (typeof window !== 'undefined') window.location.assign('/login');
+    throw new Error('Unauthorized');
   }
-  if (r.status === 204) return undefined as unknown as T;
-  return r.json() as Promise<T>;
+
+  if (res.status === 204) {
+    return undefined as unknown as T;
+  }
+
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(text || res.statusText);
+  }
+  return text ? (JSON.parse(text) as T) : (undefined as unknown as T);
 }
 
 export async function login(email: string, password: string): Promise<LoginResp> {

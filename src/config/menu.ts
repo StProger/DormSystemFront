@@ -1,4 +1,3 @@
-// src/config/menu.ts
 import type { UserRole } from '../api/client';
 
 export type MenuItem = { key: string; label: string; path: string };
@@ -6,15 +5,16 @@ export type MenuItem = { key: string; label: string; path: string };
 const common: MenuItem[] = [
   { key: 'home', label: 'Главная', path: '/app' },
   { key: 'announcements', label: 'Лента объявлений', path: '/app/announcements' },
+  // { key: 'logout', label: 'Выход', path: '/logout' },
 ];
 
 const byRole: Record<UserRole, MenuItem[]> = {
   student: [
-  ...common,
-  { key: 'room', label: 'Моя комната', path: '/app/room' },
-  { key: 'tickets', label: 'Мои заявки', path: '/app/tickets' },
-  { key: 'tickets-new', label: 'Создать заявку', path: '/app/tickets/new' },
-  { key: 'large', label: 'Внос/вынос КГВ', path: '/app/large-items' },
+    ...common,
+    { key: 'room', label: 'Моя комната', path: '/app/room' },
+    { key: 'tickets', label: 'Мои заявки', path: '/app/tickets' },
+    { key: 'tickets-new', label: 'Создать заявку', path: '/app/tickets/new' },
+    { key: 'large', label: 'Внос/вынос КГВ', path: '/app/large-items' },
   ],
   comendant: [
     ...common,
