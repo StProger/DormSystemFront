@@ -12,6 +12,10 @@ import LargeItemCreate from './pages/LargeItemCreate';
 import RoomInfo from './pages/RoomInfo';
 import AssessRooms from './pages/AssessRooms';
 import Logout from './pages/Logout';
+import GuestPassCreate from './pages/GuestPassCreate';
+import GuestPassList from './pages/GuestPassList';
+import GuestPassAdmin from './pages/GuestPassAdmin';
+import GuestPassCheck from './pages/GuestPassCheck';
 
 export default function App() {
   return (
@@ -37,7 +41,10 @@ export default function App() {
           <Route path="large-items" element={<LargeItemCreate />} />
           <Route path="room" element={<RoomInfo />} />
           <Route path="assess" element={<AssessRooms />} />
-          
+          <Route path="guests" element={<GuestPassList />} />
+          <Route path="guests/new" element={<GuestPassCreate />} />
+          <Route path="guests-admin" element={<GuestPassAdmin />} />
+          <Route path="guest-check" element={<GuestPassCheck />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/app" replace />} />

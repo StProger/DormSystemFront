@@ -213,3 +213,64 @@ export async function createRoomAssessment(roomId: string, score: number, commen
     body: JSON.stringify({ score, comment: comment || null }),
   });
 }
+
+// types
+export type GuestPassStatus = 'pending'|'approved'|'rejected'|'checked_in'|'checked_out'|'expired';
+
+export type GuestPass = {
+  id: string;
+  guest_full_name: string;
+  guest_document?: string | null;
+  note?: string | null;
+  planned_from: string;
+  planned_to?: string | null;
+  status: GuestPassStatus;
+  code?: string | null;
+  code_expires_at?: string | null;
+  checked_in_at?: string | null;
+  checked_out_at?: string | null;
+  created_at: string;
+};
+
+export type GuestPassAdmin = GuestPass & {
+  resident_id: string;
+  resident_name?: string | null;
+  approved_by?: string | null;
+};
+
+// student
+export async function createGuestPass(body: {
+  guest_full_name: string;
+  guest_document?: string;
+  note?: string;
+  planned_from: string;  // ISO
+  planned_to?: string;   // ISO
+}): Promise<GuestPass> {
+  return apiFetch<GuestPass>('/guest-passes', { method: 'POST', body: JSON.stringify(body) });
+}
+
+export async function getMyGuestPasses(): Promise<GuestPass[]> {
+  return apiFetch<GuestPass[]>('/guest-passes/me');
+}
+
+// admin
+export async function adminGetGuestPasses(params?: { status?: GuestPassStatus; date_from?: string; date_to?: string; }): Promise<GuestPassAdmin[]> {
+  const q = new URLSearchParams();
+  if (params?.status) q.set('status', params.status);
+  if (params?.date_from) q.set('date_from', params.date_from);
+  if (params?.date_to) q.set('date_to', params.date_to);
+  const p = q.toString();
+  return apiFetch<GuestPassAdmin[]>('/guest-passes' + (p ? `?${p}` : ''));
+}
+
+export async function adminUpdateGuestPass(id: string, action: 'approve'|'reject'): Promise<GuestPassAdmin> {
+  return apiFetch<GuestPassAdmin>(`/guest-passes/${id}`, { method:'PATCH', body: JSON.stringify({ action }) });
+}
+
+// guard
+export async function guardCheckIn(code: string): Promise<{status:'ok'; id:string}> {
+  return apiFetch('/guest-passes/check-in', { method:'POST', body: JSON.stringify({ code }) });
+}
+export async function guardCheckOut(code: string): Promise<{status:'ok'; id:string}> {
+  return apiFetch('/guest-passes/check-out', { method:'POST', body: JSON.stringify({ code }) });
+}
