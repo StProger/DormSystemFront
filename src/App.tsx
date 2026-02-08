@@ -16,6 +16,10 @@ import GuestPassCreate from './pages/GuestPassCreate';
 import GuestPassList from './pages/GuestPassList';
 import GuestPassAdmin from './pages/GuestPassAdmin';
 import GuestPassCheck from './pages/GuestPassCheck';
+import RoomsAdmin from './pages/RoomsAdmin';
+import OccupancyAdmin from './pages/OccupancyAdmin';
+import ImportAdmin from './pages/ImportAdmin';
+import StudentCreateAdmin from './pages/StudentCreateAdmin';
 
 export default function App() {
   return (
@@ -45,6 +49,10 @@ export default function App() {
           <Route path="guests/new" element={<GuestPassCreate />} />
           <Route path="guests-admin" element={<GuestPassAdmin />} />
           <Route path="guest-check" element={<GuestPassCheck />} />
+          <Route path="rooms-admin" element={<RoomsAdmin />} />
+          <Route path="occupancy-admin" element={<OccupancyAdmin />} />
+          <Route path="import" element={<ImportAdmin />} />
+          <Route path="students/new" element={<StudentCreateAdmin />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/app" replace />} />

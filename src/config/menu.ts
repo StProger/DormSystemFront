@@ -28,10 +28,14 @@ comendant: [
 ],
 head: [
   ...common,
+  { key: 'rooms-admin', label: 'Комнаты', path: '/app/rooms-admin' },
+  { key: 'student-new', label: 'Добавить студента', path: '/app/students/new' },
+  { key: 'occupancy-admin', label: 'Заселение/переселение', path: '/app/occupancy-admin' },
   { key: 'guest-admin', label: 'Гости (админ)', path: '/app/guests-admin' },
   { key: 'tickets-admin', label: 'Обработка заявок', path: '/app/tickets' },
   { key: 'announcements-create', label: 'Публиковать объявление', path: '/app/announcements/new' },
   { key: 'reports', label: 'Отчётность', path: '/app/reports' },
+  { key: 'import', label: 'Импорт Excel', path: '/app/import' },
 ],
 guard: [
   ...common,

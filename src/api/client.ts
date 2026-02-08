@@ -274,3 +274,96 @@ export async function guardCheckIn(code: string): Promise<{status:'ok'; id:strin
 export async function guardCheckOut(code: string): Promise<{status:'ok'; id:string}> {
   return apiFetch('/guest-passes/check-out', { method:'POST', body: JSON.stringify({ code }) });
 }
+
+
+export type RoomAdmin = {
+  id: string;
+  number: string;
+  capacity?: number | null;
+  occupancy: number;
+};
+
+export type StudentAdmin = {
+  id: string;
+  full_name?: string | null;
+  email?: string;
+  current_room_id?: string | null;
+  current_room_number?: string | null;
+};
+
+export async function adminRooms(): Promise<RoomAdmin[]> {
+  return apiFetch<RoomAdmin[]>('/admin/rooms');
+}
+
+export async function adminCreateRoom(number: string, capacity?: number) {
+  return apiFetch('/admin/rooms', {
+    method: 'POST',
+    body: JSON.stringify({ number, capacity: capacity ?? null }),
+  });
+}
+
+export async function adminDeleteRoom(id: string) {
+  return apiFetch(`/admin/rooms/${id}`, { method: 'DELETE' });
+}
+
+export async function adminSearchStudents(query: string): Promise<StudentAdmin[]> {
+  const q = new URLSearchParams();
+  if (query) q.set('query', query);
+  return apiFetch<StudentAdmin[]>(`/admin/students?${q.toString()}`);
+}
+
+export async function adminAssignStudent(userId: string, roomId: string) {
+  return apiFetch('/admin/occupancy/assign', {
+    method: 'POST',
+    body: JSON.stringify({ user_id: userId, room_id: roomId }),
+  });
+}
+
+export async function adminReleaseStudent(userId: string) {
+  return apiFetch('/admin/occupancy/release', {
+    method: 'POST',
+    body: JSON.stringify({ user_id: userId }),
+  });
+}
+
+export type ImportRowError = {
+  row: number;
+  field: string;
+  message: string;
+  raw?: Record<string, any>;
+};
+export type ImportResult = {
+  total_rows: number;
+  inserted: number;
+  updated: number;
+  skipped: number;
+  errors: ImportRowError[];
+};
+
+export async function adminImportRoomsXlsx(file: File): Promise<ImportResult> {
+  const fd = new FormData();
+  fd.append('file', file);
+  return apiFetch<ImportResult>('/admin/import/rooms', { method: 'POST', body: fd });
+}
+
+export async function adminImportStudentsXlsx(file: File): Promise<ImportResult> {
+  const fd = new FormData();
+  fd.append('file', file);
+  return apiFetch<ImportResult>('/admin/import/students', { method: 'POST', body: fd });
+}
+
+
+export async function adminCreateStudent(body: {
+  email: string;
+  password: string;
+  full_name?: string;
+  phone?: string;
+  is_active?: boolean;
+  room_id?: string | null;
+}): Promise<StudentAdmin> {
+  return apiFetch<StudentAdmin>('/admin/students', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
