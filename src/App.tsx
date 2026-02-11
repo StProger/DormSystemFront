@@ -43,7 +43,7 @@ export default function App() {
           <Route path="tickets" element={<Tickets />} />
           <Route path="announcements" element={<Announcements />} />
           <Route path="announcements/new" element={<AnnouncementCreate />} /> {/* NEW */}
-          <Route path="receipts" element={<Receipts />} />
+          {/* <Route path="receipts" element={<Receipts />} /> */}
           <Route path="tickets" element={<Tickets />} />
           <Route path="tickets/new" element={<TicketCreate />} />
           <Route path="large-items" element={<LargeItemCreate />} />
