@@ -24,6 +24,7 @@ import Notifications from './pages/Notifications';
 import ReceiptRequests from './pages/ReceiptRequests';
 import ReceiptRequestsAdmin from './pages/ReceiptRequestsAdmin';
 import AdminNotificationCompose from './pages/AdminNotificationCompose';
+import Reports from './pages/Reports';
 
 export default function App() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="receipts" element={<ReceiptRequests />} />
           <Route path="receipts-admin" element={<ReceiptRequestsAdmin />} />
           <Route path="notifications/new" element={<AdminNotificationCompose />} />
+          <Route path="reports" element={<Reports />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
