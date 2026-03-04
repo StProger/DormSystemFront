@@ -20,6 +20,11 @@ import RoomsAdmin from './pages/RoomsAdmin';
 import OccupancyAdmin from './pages/OccupancyAdmin';
 import ImportAdmin from './pages/ImportAdmin';
 import StudentCreateAdmin from './pages/StudentCreateAdmin';
+import Notifications from './pages/Notifications';
+import ReceiptRequests from './pages/ReceiptRequests';
+import ReceiptRequestsAdmin from './pages/ReceiptRequestsAdmin';
+import AdminNotificationCompose from './pages/AdminNotificationCompose';
+import Reports from './pages/Reports';
 
 export default function App() {
   return (
@@ -39,7 +44,7 @@ export default function App() {
           <Route path="tickets" element={<Tickets />} />
           <Route path="announcements" element={<Announcements />} />
           <Route path="announcements/new" element={<AnnouncementCreate />} /> {/* NEW */}
-          <Route path="receipts" element={<Receipts />} />
+          {/* <Route path="receipts" element={<Receipts />} /> */}
           <Route path="tickets" element={<Tickets />} />
           <Route path="tickets/new" element={<TicketCreate />} />
           <Route path="large-items" element={<LargeItemCreate />} />
@@ -53,6 +58,11 @@ export default function App() {
           <Route path="occupancy-admin" element={<OccupancyAdmin />} />
           <Route path="import" element={<ImportAdmin />} />
           <Route path="students/new" element={<StudentCreateAdmin />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="receipts" element={<ReceiptRequests />} />
+          <Route path="receipts-admin" element={<ReceiptRequestsAdmin />} />
+          <Route path="notifications/new" element={<AdminNotificationCompose />} />
+          <Route path="reports" element={<Reports />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/app" replace />} />

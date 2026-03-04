@@ -367,3 +367,167 @@ export async function adminCreateStudent(body: {
   });
 }
 
+
+export type NotificationListItem = {
+  id: string;
+  title: string;
+  created_at: string;
+  is_read: boolean;
+  read_at?: string | null;
+  preview: string;
+};
+
+export type NotificationAttachment = {
+  id: string;
+  filename: string;
+  content_type?: string | null;
+  size_bytes?: number | null;
+  download_url: string;
+};
+
+export type NotificationDetail = {
+  id: string;
+  title: string;
+  body: string;
+  created_at: string;
+  is_read: boolean;
+  read_at?: string | null;
+  attachments: NotificationAttachment[];
+};
+
+export async function getMyNotifications(): Promise<NotificationListItem[]> {
+  return apiFetch('/notifications');
+}
+
+export async function getUnreadCount(): Promise<{ unread: number }> {
+  return apiFetch('/notifications/unread-count');
+}
+
+export async function getNotification(id: string): Promise<NotificationDetail> {
+  return apiFetch(`/notifications/${id}`);
+}
+
+export async function markNotificationRead(id: string) {
+  return apiFetch(`/notifications/${id}/read`, { method: 'POST' });
+}
+
+// admin send notification
+export async function adminSendNotification(form: FormData) {
+  return apiFetch('/admin/notifications', { method: 'POST', body: form });
+}
+
+// receipt requests
+export type ReceiptRequest = {
+  id: string;
+  period?: string | null;
+  comment?: string | null;
+  status: string;
+  created_at: string;
+  processed_at?: string | null;
+  send_to_email?: boolean;
+};
+
+export async function createReceiptRequest(body: { period?: string; comment?: string; send_to_email?: boolean }) {
+  return apiFetch('/receipt-requests', { method: 'POST', body: JSON.stringify(body) });
+}
+
+export async function getMyReceiptRequests(): Promise<ReceiptRequest[]> {
+  return apiFetch('/receipt-requests');
+}
+
+export async function adminGetReceiptRequests(status?: string): Promise<ReceiptRequest[]> {
+  const qs = status ? `?status=${encodeURIComponent(status)}` : '';
+  return apiFetch(`/receipt-requests/admin${qs}`);
+}
+
+export async function adminRespondReceiptRequest(requestId: string, form: FormData) {
+  return apiFetch(`/receipt-requests/admin/${requestId}/respond`, { method: 'POST', body: form });
+}
+
+
+export type ReportInfo = {
+  id: string;
+  title: string;
+  description: string;
+  has_date_range: boolean;
+};
+
+export type KVCount = { key: string; count: number };
+export type DayCount = { day: string; count: number };
+
+export type OccupancyReport = {
+  summary: {
+    rooms_total: number;
+    capacity_total: number;
+    occupied_total: number;
+    free_total: number;
+    occupancy_rate: number;
+  };
+  rooms: Array<{
+    room_id: string;
+    number: string;
+    capacity: number;
+    occupied: number;
+    free: number;
+    last_rating?: number | null;
+    last_rating_comment?: string | null;
+    last_rating_at?: string | null;
+  }>;
+};
+
+export type TicketsReport = {
+  from_date?: string | null;
+  to_date?: string | null;
+  by_status: KVCount[];
+  by_type: KVCount[];
+  by_day: DayCount[];
+};
+
+export type GuestPassReport = {
+  from_date?: string | null;
+  to_date?: string | null;
+  by_status: KVCount[];
+  by_day: DayCount[];
+};
+
+export async function getReportsList(): Promise<ReportInfo[]> {
+  return apiFetch('/reports');
+}
+
+export async function getOccupancyReport(): Promise<OccupancyReport> {
+  return apiFetch('/reports/occupancy');
+}
+
+export async function getTicketsReport(from?: string, to?: string): Promise<TicketsReport> {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from_date', from);
+  if (to) qs.set('to_date', to);
+  return apiFetch(`/reports/tickets?${qs.toString()}`);
+}
+
+export async function getGuestPassReport(from?: string, to?: string): Promise<GuestPassReport> {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from_date', from);
+  if (to) qs.set('to_date', to);
+  return apiFetch(`/reports/guest-passes?${qs.toString()}`);
+}
+
+export async function downloadReportExcel(reportId: string, from?: string, to?: string) {
+  const qs = new URLSearchParams();
+  if (from) qs.set('from_date', from);
+  if (to) qs.set('to_date', to);
+
+  const res = await fetch(`${API_BASE}/reports/${reportId}/export?${qs.toString()}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+  });
+
+  if (!res.ok) throw new Error(`Export failed: ${res.status}`);
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `report_${reportId}.xlsx`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
