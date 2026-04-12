@@ -46,7 +46,7 @@ export default function ReceiptRequestsAdmin() {
           <option value="processed">processed</option>
           <option value="rejected">rejected</option>
         </select>
-        <button className="btn" onClick={load}>Обновить</button>
+        <button className="btn" style={{width:'auto'}} onClick={load}>Обновить</button>
       </div>
 
       {msg && <div className="ok">{msg}</div>}
@@ -64,7 +64,7 @@ export default function ReceiptRequestsAdmin() {
 
             {x.status === 'pending' && (
               <div style={{marginTop:10, display:'grid', gap:8}}>
-                <button className="btn btn-outline" onClick={() => setActiveId(activeId === x.id ? null : x.id)}>
+                <button className="btn btn-outline" style={{width:'auto'}} onClick={() => setActiveId(activeId === x.id ? null : x.id)}>
                   {activeId === x.id ? 'Скрыть форму' : 'Ответить (уведомлением)'}
                 </button>
 

@@ -4,8 +4,8 @@ import { setToken } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -61,8 +61,6 @@ export default function Login() {
             {loading ? 'Входим…' : 'Войти'}
           </button>
         </div>
-
-        <div className="hint">Демо: admin@example.com / admin123</div>
       </form>
     </div>
   );

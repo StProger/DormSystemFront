@@ -1,5 +1,6 @@
 export const TICKET_STATUS_RU: Record<string, string> = {
   pending: 'В обработке',
+  in_processing: 'В обработке',
   in_work: 'В работе',
   done: 'Готово',
   rejected: 'Отклонено',
@@ -7,9 +8,11 @@ export const TICKET_STATUS_RU: Record<string, string> = {
 
 export const TICKET_TYPE_RU: Record<string, string> = {
   repair: 'Ремонт',
+  maintenance: 'Обслуживание',
   service: 'Обслуживание',
   receipt: 'Квитанция',
-  bulky_inout: 'Крупногабарит (внос/вынос)',
+  large_item: 'Крупногабаритные вещи',
+  bulky_inout: 'Крупногабаритные вещи',
 };
 
 export const GUEST_STATUS_RU: Record<string, string> = {

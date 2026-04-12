@@ -29,7 +29,7 @@ export default function Reports() {
     <div>
       <h1 className="h1">Отчётность</h1>
 
-      <div className="card" style={{maxWidth: 980, display:'grid', gap:10}}>
+      <div className="card" style={{maxWidth: 'none', display:'grid', gap:10}}>
         <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
           <div style={{minWidth: 260}}>
             <div className="hint">Выберите отчёт</div>

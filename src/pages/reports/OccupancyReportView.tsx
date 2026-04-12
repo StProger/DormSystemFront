@@ -62,64 +62,74 @@ export default function OccupancyReportView() {
   if (!data) return <p className="p">Нет данных.</p>;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: 12 }}>
-      <div className="card">
-        <div style={{ fontWeight: 900, fontSize: 18 }}>Сводка</div>
-        <div className="hint" style={{ marginTop: 6 }}>
-          Загрузка: {Math.round(data.summary.occupancy_rate * 100)}%
+    <div className="occupancy-report">
+      {/* Сводка — компактная полоса сверху */}
+      <div className="card" style={{ maxWidth: 'none' }}>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ fontWeight: 900, fontSize: 18, marginRight: 'auto' }}>
+            Сводка — загрузка {Math.round(data.summary.occupancy_rate * 100)}%
+          </div>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14 }}>
+            <div>Комнат: <b>{data.summary.rooms_total}</b></div>
+            <div>Вместимость: <b>{data.summary.capacity_total}</b></div>
+            <div>Заселено: <b>{data.summary.occupied_total}</b></div>
+            <div>Свободно: <b>{data.summary.free_total}</b></div>
+          </div>
+          <div style={{ height: 120, width: 120 }}>
+            {chart && <Doughnut data={chart} options={chartOptions} />}
+          </div>
+          <button
+            className="btn btn-sm"
+            style={{ width: 'auto' }}
+            onClick={() => downloadReportExcel('occupancy')}
+          >
+            Скачать Excel
+          </button>
         </div>
-
-        <div style={{ marginTop: 12, height: 220 }}>
-          {chart && <Doughnut data={chart} options={chartOptions} />}
-        </div>
-
-        <div style={{ display: 'grid', gap: 6, marginTop: 12 }}>
-          <div>Комнат: <b>{data.summary.rooms_total}</b></div>
-          <div>Вместимость: <b>{data.summary.capacity_total}</b></div>
-          <div>Заселено: <b>{data.summary.occupied_total}</b></div>
-          <div>Свободно: <b>{data.summary.free_total}</b></div>
-        </div>
-
-        <button
-          className="btn btn-sm"
-          style={{ marginTop: 12 }}
-          onClick={() => downloadReportExcel('occupancy')}
-        >
-          Скачать Excel
-        </button>
       </div>
 
-      <div className="card">
+      {/* Таблица на всю ширину */}
+      <div className="card" style={{ maxWidth: 'none' }}>
         <div style={{ fontWeight: 900, fontSize: 18 }}>Комнаты</div>
-        <div className="hint">Таблица загрузки по комнатам (и последняя оценка, если есть)</div>
+        <div className="hint" style={{ textAlign: 'left', marginTop: 4 }}>Таблица загрузки по комнатам (и последняя оценка, если есть)</div>
 
-        <div style={{ overflow: 'auto', marginTop: 10 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="report-table-scroll">
+          <table className="report-table">
             <thead>
-              <tr style={{ textAlign: 'left' }}>
+              <tr>
                 <th>Комната</th>
-                <th>Вместимость</th>
+                <th style={{ minWidth: 140 }}>Загрузка</th>
                 <th>Заселено</th>
                 <th>Свободно</th>
                 <th>Оценка</th>
-                <th>Комментарий</th>
+                <th style={{ minWidth: 200 }}>Комментарий</th>
               </tr>
             </thead>
             <tbody>
-              {data.rooms.map((r) => (
-                <tr key={r.room_id} style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                  <td>{r.number}</td>
-                  <td>{r.capacity}</td>
-                  <td>{r.occupied}</td>
-                  <td>{r.free}</td>
-                  <td>{r.last_rating ?? '—'}</td>
-                  <td style={{ maxWidth: 360 }}>{r.last_rating_comment ?? '—'}</td>
-                </tr>
-              ))}
+              {data.rooms.map((r) => {
+                const pct = r.capacity > 0 ? Math.round((r.occupied / r.capacity) * 100) : 0;
+                const barColor = pct === 100 ? '#ef4444' : pct >= 75 ? '#f59e0b' : '#22c55e';
+                return (
+                  <tr key={r.room_id}>
+                    <td className="cell-number">{r.number}</td>
+                    <td>
+                      <div className="occupancy-bar">
+                        <div className="occupancy-bar__track">
+                          <div className="occupancy-bar__fill" style={{ width: `${pct}%`, background: barColor }} />
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 600, minWidth: 36 }}>{pct}%</span>
+                      </div>
+                    </td>
+                    <td>{r.occupied} / {r.capacity}</td>
+                    <td>{r.free}</td>
+                    <td>{r.last_rating != null ? <span style={{ fontWeight: 600 }}>{r.last_rating}</span> : <span className="cell-muted">—</span>}</td>
+                    <td className="cell-muted">{r.last_rating_comment ?? '—'}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );
