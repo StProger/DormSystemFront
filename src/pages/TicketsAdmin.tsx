@@ -54,7 +54,7 @@ export default function TicketsAdmin() {
           <input type="checkbox" checked={onlyUnassigned} onChange={e=>setOnlyUnassigned(e.target.checked)} />
           Только без назначенного
         </label>
-        <button className="btn" onClick={load}>Обновить</button>
+        <button className="btn" style={{width:'auto'}} onClick={load}>Обновить</button>
       </div>
 
       {error && <div className="error">{error}</div>}
@@ -116,10 +116,10 @@ function TicketCard({ t, onChanged }:{ t: TicketAdmin; onChanged: ()=>void }) {
       </div>
 
       <div style={{display:'flex', gap:8, marginTop:12, flexWrap:'wrap'}}>
-        <button className="btn" onClick={assignSelf}>Назначить на меня</button>
-        <button className="btn" onClick={()=>setStatus('in_processing')}>Статус: В обработке</button>
-        <button className="btn" onClick={()=>setStatus('in_work')}>Статус: В работе</button>
-        <button className="btn" onClick={()=>setStatus('done')}>Статус: Готово</button>
+        <button className="btn" style={{width:'auto'}} onClick={assignSelf}>Назначить на меня</button>
+        <button className="btn" style={{width:'auto'}} onClick={()=>setStatus('in_processing')}>Статус: В обработке</button>
+        <button className="btn" style={{width:'auto'}} onClick={()=>setStatus('in_work')}>Статус: В работе</button>
+        <button className="btn" style={{width:'auto'}} onClick={()=>setStatus('done')}>Статус: Готово</button>
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ export default function GuestPassAdminPage() {
           <option value="checked_out">Вышел</option>
           <option value="expired">Истёк</option>
         </select>
-        <button className="btn" onClick={load}>Обновить</button>
+        <button className="btn" style={{width:'auto'}} onClick={load}>Обновить</button>
       </div>
 
       {err && <div className="error">{err}</div>}
@@ -74,8 +74,8 @@ function Card({ x, onReload }:{ x: GuestPassAdminDto; onReload: ()=>void }) {
         </div>
       )}
       <div style={{display:'flex', gap:8, marginTop:12, flexWrap:'wrap'}}>
-        <button className="btn" onClick={approve} disabled={x.status!=='pending'}>Одобрить</button>
-        <button className="btn" onClick={reject} disabled={x.status!=='pending'}>Отклонить</button>
+        <button className="btn" style={{width:'auto'}} onClick={approve} disabled={x.status!=='pending'}>Одобрить</button>
+        <button className="btn" style={{width:'auto'}} onClick={reject} disabled={x.status!=='pending'}>Отклонить</button>
       </div>
     </div>
   );
