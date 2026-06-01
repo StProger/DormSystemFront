@@ -141,7 +141,7 @@ export default function TicketsReportView() {
             className="btn btn-outline btn-sm"
             onClick={() => downloadReportExcel('tickets', from || undefined, to || undefined)}
           >
-            Скачать Excel
+            Скачать CSV
           </button>
         </div>
       </div>

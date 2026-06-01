@@ -119,7 +119,7 @@ export default function GuestPassReportView() {
             className="btn btn-outline btn-sm"
             onClick={() => downloadReportExcel('guest_passes', from || undefined, to || undefined)}
           >
-            Скачать Excel
+            Скачать CSV
           </button>
         </div>
       </div>

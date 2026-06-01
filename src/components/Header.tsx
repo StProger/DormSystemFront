@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from '../components/NotificationBell';
+import ThemeToggle from '../components/ThemeToggle';
 
 type Props = {
   appTitle?: string;
@@ -22,6 +23,7 @@ export default function Header({ appTitle = 'DormSystem', me }: Props) {
             <div className="role">{ruRole(me.role)}</div>
           </div>
         )} */}
+        <ThemeToggle />
         <NotificationBell />
         <button className="btn btn-outline" onClick={() => navigate('/logout')}>
           Выход

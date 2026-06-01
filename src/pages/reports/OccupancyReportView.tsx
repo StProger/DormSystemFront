@@ -83,7 +83,7 @@ export default function OccupancyReportView() {
             style={{ width: 'auto' }}
             onClick={() => downloadReportExcel('occupancy')}
           >
-            Скачать Excel
+            Скачать CSV
           </button>
         </div>
       </div>
